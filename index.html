@@ -6,18 +6,15 @@
 <title>Euribor Trends</title>
 <!-- Import Plotly.js -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<!-- You might need to include jQuery or another tool for AJAX requests -->
+<!-- Include jQuery for AJAX requests -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Base URL parts
     const base_url = "https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.";
     const euribor_types = ["EURIBOR1MD_", "EURIBOR3MD_", "EURIBOR6MD_"];
     const last_n_observations = "24";
-
     let euribor_data = [];
 
-    // Function to fetch data for each Euribor type and add to the array
     function fetchDataAndPlot() {
         let fetches = euribor_types.map(euribor_type => {
             let full_url = `${base_url}${euribor_type}.HSTA?lastNObservations=${last_n_observations}&detail=dataonly&format=jsondata`;
@@ -26,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let dates = data['structure']['dimensions']['observation'][0]['values'].map(v => v['id']);
                 let values = Object.keys(observations).map(k => observations[k][0]);
                 euribor_data.push({
-                    type: euribor_type,
+                    type: euribor_type.replace("_", ""),
                     dates: dates.map(date => new Date(date.substring(0, 4), date.substring(4, 6) - 1)),
                     values: values
                 });
@@ -38,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to plot data using Plotly.js
     function plotData() {
         let traces = euribor_data.map(dataItem => {
             return {
@@ -46,15 +42,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: dataItem.values,
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: dataItem.type
+                name: dataItem.type,
+                marker: {
+                    size: 8 // adjust marker size here
+                }
             };
         });
 
         let layout = {
             title: 'Recent Euribor Trends',
-            xaxis: {title: 'Date'},
-            yaxis: {title: 'Euribor Rate'},
-            legend: {title: 'Euribor Type'}
+            xaxis: {
+                title: 'Date',
+                autorange: true,
+                tickformat: "%b %Y",
+                type: 'date'
+            },
+            yaxis: {
+                title: 'Euribor Rate (%)',
+                autorange: true,
+                fixedrange: false
+            },
+            legend: {
+                title: {
+                    text: 'Euribor Type',
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            margin: { 
+                l: 60, 
+                r: 30, 
+                b: 50, 
+                t: 100, 
+                pad: 4 
+            },
+            responsive: true
         };
 
         Plotly.newPlot('plot', traces, layout);
@@ -63,9 +86,26 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchDataAndPlot();
 });
 </script>
+<style>
+/* Add some basic styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#plot {
+  width: 90%;
+  max-width: 900px;
+  height: 500px;
+  margin: 20px auto;
+}
+</style>
 </head>
 <body>
 <h1>Recent Euribor Trends</h1>
-<div id="plot" style="width:100%;max-width:900px;height:500px;"></div>
+<div id="plot"></div>
 </body>
 </html>
