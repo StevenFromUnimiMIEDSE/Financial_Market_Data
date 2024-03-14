@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let values = Object.keys(observations).map(k => observations[k][0]);
                 euribor_data.push({
                     type: euribor_type.replace("_", ""),
-                    dates: dates.map(date => new Date(date.substring(0, 4), date.substring(4, 6) - 1)),
+                    dates: dates.map(date => new Date(date.substring(0, 4), date.substring(5, 7) - 1, date.substring(8, 10))),
                     values: values
                 });
             });
@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: 'scatter',
                 mode: 'lines+markers',
                 name: dataItem.type,
+                line: { shape: 'spline', smoothing: 1.3 },
                 marker: {
-                    size: 8 // adjust marker size here
+                    size: 5 // reduced size for clarity
                 }
             };
         });
@@ -53,30 +54,27 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Recent Euribor Trends',
             xaxis: {
                 title: 'Date',
-                autorange: true,
                 tickformat: "%b %Y",
-                type: 'date'
+                type: 'date',
+                gridcolor: 'lightgrey'
             },
             yaxis: {
                 title: 'Euribor Rate (%)',
-                autorange: true,
-                fixedrange: false
+                fixedrange: false,
+                gridcolor: 'lightgrey'
             },
             legend: {
-                title: {
-                    text: 'Euribor Type',
-                    font: {
-                        size: 14
-                    }
-                }
+                orientation: 'h',
+                y: -0.2 // adjust legend position
             },
-            margin: { 
-                l: 60, 
-                r: 30, 
-                b: 50, 
-                t: 100, 
-                pad: 4 
+            margin: {
+                l: 60,
+                r: 30,
+                b: 50,
+                t: 80,
+                pad: 4
             },
+            plot_bgcolor: 'white', // setting background color to white
             responsive: true
         };
 
@@ -90,17 +88,10 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Add some basic styling */
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 #plot {
-  width: 90%;
-  max-width: 900px;
-  height: 500px;
-  margin: 20px auto;
+  width: 100%;
+  height: 100vh; /* Use full height to make it more responsive */
 }
 </style>
 </head>
