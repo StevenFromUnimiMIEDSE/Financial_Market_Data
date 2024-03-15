@@ -8,32 +8,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const base_url = "https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM";
-    const queryParams = {
-        Frequency: 'B',
-        ReferenceArea: 'U2',
-        Currency: 'EUR',
-        FinancialMarketProvider: '4F',
-        FinancialMarketInstrument: 'G_N_A',
-        FinancialMarketProviderIdentifier: 'SV_C_YM',
-        FinancialMarketDataType: 'TAU1'
-    };
-
-    function constructQueryUrl() {
-        let queryParts = [];
-        for (const [key, value] of Object.entries(queryParams)) {
-            queryParts.push(`${key}=${encodeURIComponent(value)}`);
-        }
-        return `${base_url}?${queryParts.join('&')}`;
-    }
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const targetUrl = "https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM?Frequency=B&ReferenceArea=U2&Currency=EUR&FinancialMarketProvider=4F&FinancialMarketInstrument=G_N_A&FinancialMarketProviderIdentifier=SV_C_YM&FinancialMarketDataType=TAU1";
+    const apiUrl = `${proxyUrl}${targetUrl}`;
 
     function fetchDataAndPlot() {
-        let full_url = constructQueryUrl();
-        
-        $.getJSON(full_url, function(data) {
+        $.getJSON(apiUrl, function(data) {
             // Placeholder: Adjust based on the actual structure of the response from the ECB API
-            let observations = data.observations;
-            let dates = observations.map(obs => obs.date); // Adjust 'date' as per response
+            let observations = data.observations; // Adjust according to actual API response
+            let dates = observations.map(obs => obs.date); // Adjust 'date' access as per response structure
             let values = observations.map(obs => obs.value); // Adjust 'value'
 
             let bond_yield_data = [{
@@ -43,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }];
 
             plotData(bond_yield_data);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching data: ", textStatus, errorThrown);
         });
     }
 
