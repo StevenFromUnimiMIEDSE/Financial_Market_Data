@@ -10,10 +10,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Adjusted base URL for US Dollar Libor rates, assuming a hypothetical endpoint
+    // Assuming a hypothetical base URL for US Dollar Libor rates
     const base_url = "https://data-api.example.com/service/data/FM/M.GB.USD.RT.MM.";
-    // Expanded to include hypothetical identifiers for 1-month, 3-month, and 6-month US Dollar Libor rates
-    const libor_types = ["USD1MLIBOR_", "USD3MLIBOR_", "USD6MLIBOR_"];
+    // Focus solely on the 3-month US Dollar Libor rate
+    const libor_types = ["USD3MLIBOR_"];
     const last_n_observations = "24";
     let libor_data = [];
 
@@ -39,13 +39,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function plotData() {
         let traces = libor_data.map(dataItem => {
-            let rateType = dataItem.type.replace("USD", "").replace("LIBOR", "M Libor"); // Formatting type for display
             return {
                 x: dataItem.dates,
                 y: dataItem.values,
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: rateType,
+                name: 'USD 3M Libor',
                 line: { shape: 'spline', smoothing: 1.3 },
                 marker: {
                     size: 5 // reduced size for clarity
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         let layout = {
-            title: 'Recent US Dollar Libor Trends',
+            title: 'Recent US Dollar 3-Month Libor Trends',
             xaxis: {
                 title: 'Date',
                 tickformat: "%b %Y",
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 gridcolor: 'lightgrey'
             },
             yaxis: {
-                title: 'Libor Rate (%)',
+                title: 'US Dollar 3-Month Libor Rate (%)',
                 fixedrange: false,
                 gridcolor: 'lightgrey'
             },
@@ -87,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchDataAndPlot();
 });
 
+
 </script>
 <style>
 /* Add some basic styling */
@@ -100,7 +100,7 @@ body {
 </style>
 </head>
 <body>
-<h1>Recent Euribor Trends</h1>
+<h1>Recent Libor Trends</h1>
 <div id="plot"></div>
 </body>
 </html>
