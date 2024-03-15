@@ -3,42 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AAA-rated Ten-Year Government Bond Yields</title>
-<!-- Import Plotly.js -->
+<title>Tau 1 - AAA-rated Government Bonds Yield Curve</title>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<!-- Include jQuery for AJAX requests -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Updated base URL for the ECB data API
-    const base_url = "https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM?";
-    // Assuming 'last_n_days' can be dynamically updated to 30 (1 month), 90 (1 quarter), or 365 (1 year)
-    const last_n_days_options = {'1M': 30, '1Q': 90, '1Y': 365};
-    let selected_range = '1Y'; // default selection
-    let bond_yield_data = [];
+    const base_url = "https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM";
+    const queryParams = {
+        Frequency: 'B',
+        ReferenceArea: 'U2',
+        Currency: 'EUR',
+        FinancialMarketProvider: '4F',
+        FinancialMarketInstrument: 'G_N_A',
+        FinancialMarketProviderIdentifier: 'SV_C_YM',
+        FinancialMarketDataType: 'TAU1'
+    };
+
+    function constructQueryUrl() {
+        let queryParts = [];
+        for (const [key, value] of Object.entries(queryParams)) {
+            queryParts.push(`${key}=${encodeURIComponent(value)}`);
+        }
+        return `${base_url}?${queryParts.join('&')}`;
+    }
 
     function fetchDataAndPlot() {
-        // Assuming 'last_n_days' query parameter can filter the date range
-        let last_n_days = last_n_days_options[selected_range];
-        let full_url = `${base_url}lastNDays=${last_n_days}&filter=(FinancialMarketDataType=SR_10Y)&format=json`;
-
-        // Fetch data from ECB API
+        let full_url = constructQueryUrl();
+        
         $.getJSON(full_url, function(data) {
-            // Placeholder for actual data extraction logic, adjust based on actual API response format
-            let observations = data['observations']; // This path will likely need adjustment
-            let dates = observations.map(obs => obs.date); // Adjust 'date' access as per the response structure
-            let values = observations.map(obs => obs.value); // Adjust 'value' access
+            // Placeholder: Adjust based on the actual structure of the response from the ECB API
+            let observations = data.observations;
+            let dates = observations.map(obs => obs.date); // Adjust 'date' as per response
+            let values = observations.map(obs => obs.value); // Adjust 'value'
 
-            bond_yield_data = [{
-                type: 'Euro Area AAA-rated 10Y Bond Yields',
+            let bond_yield_data = [{
                 dates: dates.map(date => new Date(date)),
-                values: values
+                values: values,
+                type: 'Euro Area AAA-rated Tau 1'
             }];
-            plotData();
+
+            plotData(bond_yield_data);
         });
     }
 
-    function plotData() {
+    function plotData(bond_yield_data) {
         let traces = bond_yield_data.map(dataItem => {
             return {
                 x: dataItem.dates,
@@ -46,63 +54,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: 'scatter',
                 mode: 'lines+markers',
                 name: dataItem.type,
-                line: { shape: 'spline', smoothing: 1.3 },
-                marker: {
-                    size: 5 // reduced size for clarity
-                }
+                line: { shape: 'spline', smoothing: 1.3 }
             };
         });
 
         let layout = {
-            title: 'Recent AAA-rated Ten-Year Government Bond Yield Trends',
+            title: 'Euro Area AAA-rated Government Bonds Yield Curve - Tau 1',
             xaxis: {
                 title: 'Date',
-                tickformat: "%b %Y",
-                type: 'date',
-                gridcolor: 'lightgrey'
+                tickformat: "%b %d, %Y",
+                type: 'date'
             },
             yaxis: {
-                title: 'Yield (%)',
-                fixedrange: false,
-                gridcolor: 'lightgrey'
+                title: 'Tau 1 Value',
+                fixedrange: true
             },
-            legend: {
-                orientation: 'h',
-                y: -0.2 // adjust legend position
-            },
-            margin: {
-                l: 60,
-                r: 30,
-                b: 50,
-                t: 80,
-                pad: 4
-            },
-            plot_bgcolor: 'white', // setting background color to white
+            margin: { l: 50, r: 25, b: 50, t: 50, pad: 4 },
+            plot_bgcolor: 'white',
             responsive: true
         };
 
         Plotly.newPlot('plot', traces, layout);
     }
 
-    // Initial call with default range
     fetchDataAndPlot();
-
-    // Consider adding UI elements for users to select '1M', '1Q', '1Y' and then call fetchDataAndPlot accordingly
 });
 </script>
 <style>
-/* Add some basic styling */
-body {
-  font-family: Arial, sans-serif;
-}
-#plot {
-  width: 100%;
-  height: 100vh; /* Use full height to make it more responsive */
-}
+body { font-family: Arial, sans-serif; }
+#plot { width: 100%; height: 90vh; }
 </style>
 </head>
 <body>
-<h1>Recent AAA-rated Ten-Year Government Bond Yield Trends</h1>
+<h1>Euro Area AAA-rated Government Bonds Yield Curve - Tau 1</h1>
 <div id="plot"></div>
 </body>
 </html>
