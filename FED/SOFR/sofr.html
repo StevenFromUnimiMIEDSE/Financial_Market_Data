@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euribor Trends</title>
+<!-- Import Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- Include jQuery for AJAX requests -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const base_url = "https://markets.newyorkfed.org/api/rates/secured/";
+    const sofr_type = "sofr"; // You may need to adjust this according to the exact API parameter for SOFR
+    const last_n_observations = "24";
+    let sofr_data = [];
+
+    function fetchDataAndPlot() {
+        let full_url = `${base_url}${sofr_type}/last/${last_n_observations}.json`; // Adjusted for SOFR API
+        fetch(full_url)
+            .then(response => response.json())
+            .then(data => {
+                // The parsing here depends on the exact structure of the response
+                // This is a placeholder and will need adjustment
+                let observations = data['observations'];
+                let dates = observations.map(obs => new Date(obs.date));
+                let values = observations.map(obs => obs.rate);
+                sofr_data.push({
+                    type: "SOFR",
+                    dates: dates,
+                    values: values
+                });
+
+                plotData(); // Assuming you have a similar plotting function
+            })
+            .catch(error => {
+                console.error('Error fetching SOFR rate:', error);
+            });
+    }
+
+    fetchDataAndPlot();
+});
+
+</script>
+<style>
+/* Add some basic styling */
+body {
+  font-family: Arial, sans-serif;
+}
+#plot {
+  width: 100%;
+  height: 100vh; /* Use full height to make it more responsive */
+}
+</style>
+</head>
+<body>
+<h1>Recent Euribor Trends</h1>
+<div id="plot"></div>
+</body>
+</html>
