@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latest 20 Data Entries</title>
+    <title>Latest 20 Data Entries and Line Chart</title>
     <style>
         table {
             width: 100%;
@@ -20,6 +20,10 @@
         th {
             background-color: #4CAF50;
             color: white;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -38,14 +42,15 @@
         </tbody>
     </table>
 
-    <script>
-        // Simulate fetching data. In a real application, this would be replaced with a fetch call.
-        const fetchData = () => {
-            // Here you would fetch and return your data array
-            // For demonstration, using static data based on your image
-            return [
-                // ... (earlier entries here) ...
+    <div class="chart-container">
+        <canvas id="data-chart"></canvas>
+    </div>
 
+    <!-- Include Chart.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <script>
+       const data = [
     { date: '2021/1/31', label: '2021Jan', value: '0.2236' },
     { date: '2021/2/28', label: '2021Feb', value: '0.1904' },
     { date: '2021/3/31', label: '2021Mar', value: '0.1896' },
@@ -84,17 +89,15 @@
     { date: '2023/12/31', label: '2023Dec', value: '5.6274' },
     { date: '2024/1/31', label: '2024Jan', value: '5.5811' },
     { date: '2024/2/29', label: '2024Feb', value: '5.5793' }
+];
 
-                // Add all your data entries in this format
-            ];
-        };
 
-        const updateTable = (data) => {
+        const updateTable = (dataEntries) => {
             const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; // Clear existing table data
 
             // Take the last 20 entries
-            const latestData = data.slice(-20);
+            const latestData = dataEntries.slice(-20);
             latestData.forEach((row) => {
                 let tr = document.createElement('tr');
                 tr.innerHTML = `<td>${row.date}</td><td>${row.label}</td><td>${row.value}</td>`;
@@ -102,9 +105,35 @@
             });
         };
 
+        const updateChart = (dataEntries) => {
+            const ctx = document.getElementById('data-chart').getContext('2d');
+            const labels = dataEntries.map(entry => entry.label);
+            const values = dataEntries.map(entry => entry.value);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Value over time',
+                        data: values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            const data = fetchData();
             updateTable(data);
+            updateChart(data);
         });
     </script>
 </body>
