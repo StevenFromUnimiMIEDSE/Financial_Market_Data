@@ -1,0 +1,1 @@
+To avoid API restrictions, the current data is downloaded in csv format, locally transformed to js data structure, and pasted into the html code.
