@@ -10,20 +10,34 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const base_url = "https://data-api.ecb.europa.eu/service/data/AAA/AAA.B.U2.EUR.4F.G_N_A.SV_C_YM.";
-    const aaa_types = ["SR_3M", "SR_1Y", "SR_10Y"];
+    const protocol = "https://";
+    const wsEntryPoint = "data-api.ecb.europa.eu";
+    const resource = "data";
+    const aaa_flowRef = "FM/M.U2.EUR.RT.MM.AAA";
     const last_n_observations = "36";
+
+    function buildUrl(flowRef, lastObservations) {
+        const parameters = `lastNObservations=${lastObservations}&detail=dataonly&format=jsondata`;
+        return `${protocol}${wsEntryPoint}/${resource}/${flowRef}?${parameters}`;
+    }
+
+    let aaa_types = [
+        { type: "AAA_3M", flowRef: "YC/YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_3M" },
+        { type: "AAA_10Y", flowRef: "YC/YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y" },
+        { type: "AAA_1Y", flowRef: "YC/YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_1Y" }
+    ];
+
     let aaa_data = [];
 
     function fetchDataAndPlot() {
         let fetches = aaa_types.map(aaa_type => {
-            let full_url = `${base_url}${aaa_type}?lastNObservations=${last_n_observations}&detail=dataonly&format=jsondata`;
+            let full_url = buildUrl(aaa_type.flowRef, last_n_observations);
             return $.getJSON(full_url, function(data) {
                 let observations = data['dataSets'][0]['series']['0:0:0:0:0:0:0']['observations'];
                 let dates = data['structure']['dimensions']['observation'][0]['values'].map(v => v['id']);
                 let values = Object.keys(observations).map(k => observations[k][0]);
                 aaa_data.push({
-                    type: aaa_type.replace("_", ""),
+                    type: aaa_type.type,
                     dates: dates.map(date => new Date(date.substring(0, 4), date.substring(5, 7) - 1, date.substring(8, 10))),
                     values: values
                 });
