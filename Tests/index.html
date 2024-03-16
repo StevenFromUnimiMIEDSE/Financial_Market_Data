@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AAA Yield 10 Y</title>
     <style>
+        /* Styles for title */
+        .title-line {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
         /* Styles for table */
         #data-table-container {
             height: 300px; /* Adjust the height as needed */
@@ -19,7 +29,7 @@
     </style>
 </head>
 <body>
-    <h2>AAA Yield 10 Y</h2>
+    <div class="title-line">AAA Yield 10 Y</div>
     <label for="start-date">Select Start Date:</label>
     <input type="date" id="start-date" name="start-date">
 
@@ -25022,7 +25032,7 @@
 ;
 
 
-const updateTableAndChart = (dataEntries, startDate, endDate) => {
+ const updateTableAndChart = (dataEntries, startDate, endDate) => {
             // Filter data based on the selected date range
             const filteredData = dataEntries.filter(entry => {
                 const entryDate = new Date(entry.date);
