@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yield Curve Spot Rate Chart</title>
+    <title>AAA Yield 10 Y</title>
     <style>
         table {
             width: 100%;
@@ -28,7 +28,14 @@
     </style>
 </head>
 <body>
-    <h2>Yield Curve Spot Rates</h2>
+    <h2>AAA Yield 10 Y</h2>
+    <label for="interval">Select Interval:</label>
+    <select id="interval">
+        <option value="20">Last 20 entries</option>
+        <option value="30">Last 30 entries</option>
+        <option value="40">Last 40 entries</option>
+        <!-- Add more options as needed -->
+    </select>
     <table id="data-table">
         <thead>
             <tr>
@@ -25020,12 +25027,12 @@
 ;
 
 
-        const updateTableAndChart = (dataEntries) => {
+        const updateTableAndChart = (dataEntries, interval) => {
             const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; // Clear existing table data
 
-            // Take the last 20 entries for the table
-            const latestData = dataEntries.slice(-20);
+            // Take the specified number of entries for the table
+            const latestData = dataEntries.slice(-interval);
             latestData.forEach((row) => {
                 let tr = document.createElement('tr');
                 tr.innerHTML = `<td>${row.date}</td><td>${row.timePeriod}</td><td>${row.yieldRate}</td>`;
@@ -25037,10 +25044,10 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dataEntries.map(entry => entry.timePeriod),
+                    labels: latestData.map(entry => entry.timePeriod),
                     datasets: [{
                         label: 'Yield Curve Spot Rate',
-                        data: dataEntries.map(entry => entry.yieldRate),
+                        data: latestData.map(entry => entry.yieldRate),
                         borderColor: 'rgb(75, 192, 192)',
                         tension: 0.1
                     }]
@@ -25056,7 +25063,15 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            updateTableAndChart(data);
+            const intervalSelect = document.getElementById('interval');
+            const initialInterval = parseInt(intervalSelect.value);
+            updateTableAndChart(data, initialInterval);
+
+            // Update chart when interval selection changes
+            intervalSelect.addEventListener('change', () => {
+                const selectedInterval = parseInt(intervalSelect.value);
+                updateTableAndChart(data, selectedInterval);
+            });
         });
     </script>
 </body>
