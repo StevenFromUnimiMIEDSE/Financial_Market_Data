@@ -34,52 +34,78 @@
     <!-- Add any JavaScript libraries or scripts here -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
-        // Add your JavaScript code for fetching and displaying data here
-        // Example: Fetch data from backend and generate Plotly chart
-        // Replace this example with your actual implementation
-        // This could involve making AJAX requests to your Python backend
-        // to fetch Forex moving average data and plotting it using Plotly
+        // Function to fetch Forex rate from Python backend
+        function fetchForexRate() {
+            // Make an AJAX request to the Python backend
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_forex_rate', true); // Endpoint to fetch Forex rate
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        // Parse the response JSON
+                        var response = JSON.parse(xhr.responseText);
+                        var forexRate = response.forex_rate;
+                        // Call function to update chart with Forex rate
+                        updateChart(forexRate);
+                    } else {
+                        console.log('Error fetching Forex rate: ' + xhr.status);
+                    }
+                }
+            };
+            xhr.send();
+        }
 
-        // Example data for demonstration
-        var dates = ['2023-12-28', '2023-12-29', '2023-12-30']; // Example dates
-        var closePrices = [1.2, 1.3, 1.25]; // Example close prices
-        var shortMA = [1.22, 1.25, 1.28]; // Example short-term moving averages
-        var longMA = [1.18, 1.22, 1.26]; // Example long-term moving averages
+        // Function to update chart with Forex rate
+        function updateChart(forexRate) {
+            // Example data for demonstration
+            var dates = ['2023-12-28', '2023-12-29', '2023-12-30']; // Example dates
+            var closePrices = [1.2, 1.3, 1.25]; // Example close prices
+            var shortMA = [1.22, 1.25, 1.28]; // Example short-term moving averages
+            var longMA = [1.18, 1.22, 1.26]; // Example long-term moving averages
 
-        var traceClose = {
-            x: dates,
-            y: closePrices,
-            mode: 'lines',
-            name: 'Close Price'
-        };
-
-        var traceShortMA = {
-            x: dates,
-            y: shortMA,
-            mode: 'lines',
-            name: 'Short-term MA'
-        };
-
-        var traceLongMA = {
-            x: dates,
-            y: longMA,
-            mode: 'lines',
-            name: 'Long-term MA'
-        };
-
-        var data = [traceClose, traceShortMA, traceLongMA];
-
-        var layout = {
-            title: 'Forex Moving Averages',
-            xaxis: {
-                title: 'Date'
-            },
-            yaxis: {
-                title: 'Price'
+            // Adjust close prices based on Forex rate
+            for (var i = 0; i < closePrices.length; i++) {
+                closePrices[i] *= forexRate;
             }
-        };
 
-        Plotly.newPlot('chart-container', data, layout);
+            var traceClose = {
+                x: dates,
+                y: closePrices,
+                mode: 'lines',
+                name: 'Close Price'
+            };
+
+            var traceShortMA = {
+                x: dates,
+                y: shortMA,
+                mode: 'lines',
+                name: 'Short-term MA'
+            };
+
+            var traceLongMA = {
+                x: dates,
+                y: longMA,
+                mode: 'lines',
+                name: 'Long-term MA'
+            };
+
+            var data = [traceClose, traceShortMA, traceLongMA];
+
+            var layout = {
+                title: 'Forex Moving Averages',
+                xaxis: {
+                    title: 'Date'
+                },
+                yaxis: {
+                    title: 'Price'
+                }
+            };
+
+            Plotly.newPlot('chart-container', data, layout);
+        }
+
+        // Fetch Forex rate when the page loads
+        fetchForexRate();
     </script>
 </body>
 </html>
