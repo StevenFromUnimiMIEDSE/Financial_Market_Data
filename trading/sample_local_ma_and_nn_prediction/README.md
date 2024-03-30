@@ -1,3 +1,3 @@
-fx algorithm trading wait.ipynb
-useful local implementation and display
-highly biased prediction
+fx algorithm trading wait.ipynb/n
+useful local implementation and display/n
+highly biased prediction/n
