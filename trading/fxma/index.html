@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Moving Averages</title>
+    <!-- Add any CSS styles here -->
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        /* Add more styles as needed */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Forex Moving Averages</h1>
+        <div id="chart-container">
+            <!-- Chart will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Add any JavaScript libraries or scripts here -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // Add your JavaScript code for fetching and displaying data here
+        // Example: Fetch data from backend and generate Plotly chart
+        // Replace this example with your actual implementation
+        // This could involve making AJAX requests to your Python backend
+        // to fetch Forex moving average data and plotting it using Plotly
+
+        // Example data for demonstration
+        var dates = ['2023-12-28', '2023-12-29', '2023-12-30']; // Example dates
+        var closePrices = [1.2, 1.3, 1.25]; // Example close prices
+        var shortMA = [1.22, 1.25, 1.28]; // Example short-term moving averages
+        var longMA = [1.18, 1.22, 1.26]; // Example long-term moving averages
+
+        var traceClose = {
+            x: dates,
+            y: closePrices,
+            mode: 'lines',
+            name: 'Close Price'
+        };
+
+        var traceShortMA = {
+            x: dates,
+            y: shortMA,
+            mode: 'lines',
+            name: 'Short-term MA'
+        };
+
+        var traceLongMA = {
+            x: dates,
+            y: longMA,
+            mode: 'lines',
+            name: 'Long-term MA'
+        };
+
+        var data = [traceClose, traceShortMA, traceLongMA];
+
+        var layout = {
+            title: 'Forex Moving Averages',
+            xaxis: {
+                title: 'Date'
+            },
+            yaxis: {
+                title: 'Price'
+            }
+        };
+
+        Plotly.newPlot('chart-container', data, layout);
+    </script>
+</body>
+</html>
